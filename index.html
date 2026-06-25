@@ -41,17 +41,6 @@ body{overscroll-behavior:none}
 .bdg{background:var(--acc);color:#111;font-size:0.68rem;font-weight:800;border-radius:100px;padding:2px 6px;margin-left:5px;vertical-align:middle}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;font-weight:700;font-size:0.9rem;padding:10px 24px;border-radius:100px;z-index:9999;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 .toast.err{background:var(--dan)}
-.ovl{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;display:flex;align-items:flex-end;justify-content:center}
-@media(min-width:500px){.ovl{align-items:center}}
-.modal{background:var(--sur);border:1px solid var(--brd);border-radius:var(--r) var(--r) 0 0;padding:24px 18px 32px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto}
-@media(min-width:500px){.modal{border-radius:var(--r)}}
-.modal-title{font-size:1.1rem;font-weight:800;margin-bottom:18px}
-.msec{margin-bottom:16px}
-.mlbl{font-size:0.72rem;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{background:var(--card);border:2px solid var(--brd);border-radius:100px;color:var(--txt);font-size:0.88rem;font-weight:600;padding:7px 16px;cursor:pointer;transition:border-color .12s,background .12s;user-select:none}
-.chip.on{border-color:var(--acc);background:rgba(245,158,11,.13);color:var(--acc)}
-.mrow{display:flex;gap:9px;margin-top:10px}
 .olist{list-style:none;margin-bottom:18px}
 .oitm{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid var(--brd)}
 .oitm:last-child{border-bottom:none}
@@ -76,39 +65,6 @@ body{overscroll-behavior:none}
 .step-btn:active{background:var(--brd)}
 .step-btn:disabled{opacity:.3;cursor:default}
 .hint{font-size:0.73rem;color:var(--mut);margin-top:8px}
-.cat-mgr-row{border:1px solid var(--brd);border-radius:10px;margin-bottom:8px;overflow:hidden}
-.cat-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--card);gap:8px;cursor:pointer;user-select:none}
-.cat-hdr-l{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
-.cat-arrow{font-size:0.8rem;color:var(--mut);flex-shrink:0}
-.cat-name{font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.95rem}
-.cat-count{font-size:0.78rem;color:var(--mut);flex-shrink:0}
-.cat-hdr-r{display:flex;gap:4px;flex-shrink:0}
-.act-btn{background:transparent;border:none;font-size:0.85rem;cursor:pointer;padding:5px 7px;border-radius:6px;transition:background .12s;color:var(--mut)}
-.act-btn:hover{background:var(--brd)}
-.act-btn.del{color:var(--dan)}
-.act-btn.del:hover{background:rgba(239,68,68,.12)}
-.prod-mgr{padding:10px 14px 14px;background:var(--bg)}
-.prod-empty{font-size:0.82rem;color:var(--mut);padding:6px 0 10px}
-.prod-list{list-style:none;margin-bottom:10px}
-.prod-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--brd)}
-.prod-row:last-child{border-bottom:none}
-.prod-dot{color:var(--mut);flex-shrink:0}
-.prod-name{flex:1;font-size:0.9rem;color:var(--txt)}
-.prod-acts{display:flex;gap:2px;flex-shrink:0}
-.inline-inp{background:var(--bg);border:1px solid var(--acc);border-radius:6px;color:var(--txt);font-size:0.9rem;font-family:inherit;padding:4px 8px;direction:rtl;flex:1;min-width:60px}
-.inline-inp:focus{outline:none}
-.add-row{display:flex;gap:8px;margin-top:8px}
-.add-cat-form{padding-top:14px;border-top:1px solid var(--brd);margin-top:8px}
-.finput{background:var(--card);border:1px solid var(--brd);border-radius:10px;color:var(--txt);font-size:0.9rem;font-family:inherit;padding:10px 12px;direction:rtl;flex:1}
-.finput:focus{outline:2px solid var(--acc);border-color:transparent}
-.finput::placeholder{color:var(--mut)}
-.finput.sm{font-size:0.85rem;padding:8px 10px}
-.finput.err{border-color:var(--dan)!important}
-.err-msg{font-size:0.73rem;color:var(--dan);margin-top:5px}
-.xl-status{font-size:0.82rem;margin-top:10px;padding:10px 12px;border-radius:8px;text-align:center}
-.xl-ok{background:rgba(34,197,94,.15);color:var(--ok)}
-.xl-err{background:rgba(239,68,68,.15);color:var(--dan)}
-.xl-loading{color:var(--mut)}
 </style>
 </head>
 <body>
@@ -163,8 +119,6 @@ let S={
   items:[],
   totalTables:30,
   cats: FALLBACK_CATS.map(c=>({...c,products:[...c.products]})),
-  openCatId:null,
-  newCatName:"",
 };
 let toastT=null;
 
@@ -314,109 +268,8 @@ function buildSettings(w){
   st.appendChild(mb2);st.appendChild(sv);st.appendChild(pb);sr.appendChild(st);sc.appendChild(sr);
   sc.appendChild(d("hint","ניתן להגדיר בין 1 ל-99 שולחנות"));c.appendChild(sc);
 
-  const sc2=d("scard");sc2.appendChild(d("sc-title","קטגוריות ומוצרים"));
-  buildCatManager(sc2);c.appendChild(sc2);
-
-  const sc3=d("scard");sc3.appendChild(d("sc-title","קובץ אקסל"));
-  const xlRow=d("sc-row");
-  const xlLbl=d("sc-lbl","קטגוריות_ומוצרים.xlsx");xlLbl.style.cssText="color:var(--acc);font-weight:700";
-  xlRow.appendChild(xlLbl);sc3.appendChild(xlRow);
-  const reloadBtn=b("btn bs bfull","🔄 טען מחדש מהאקסל",async()=>{
-    reloadBtn.textContent="טוען...";reloadBtn.disabled=true;
-    const cats=await loadExcel();
-    if(cats){S.cats=cats;toast("✓ נטענו "+cats.length+" קטגוריות מהאקסל");render();}
-    else{toast("⚠️ לא ניתן לטעון את האקסל",true);reloadBtn.textContent="🔄 טען מחדש מהאקסל";reloadBtn.disabled=false;}
-  });
-  reloadBtn.style.marginTop="10px";sc3.appendChild(reloadBtn);
-  sc3.appendChild(d("hint","ערוך את הקובץ ב-GitHub → push → לחץ טען מחדש"));
-  c.appendChild(sc3);
-
   const bk=b("btn bs bfull","← חזרה למסך הראשי",()=>go("tables"));bk.style.marginTop="4px";c.appendChild(bk);
   w.appendChild(c);
-}
-
-/* ── Category Manager ── */
-function buildCatManager(container){
-  const list=d("");
-  S.cats.forEach(cat=>list.appendChild(buildCatRow(cat)));
-  container.appendChild(list);
-  const form=d("add-cat-form");form.appendChild(d("mlbl","הוספת קטגוריה חדשה"));
-  const addRow=d("add-row");
-  const ni=el("input","finput");ni.placeholder="שם הקטגוריה...";ni.value=S.newCatName||"";
-  ni.oninput=e=>{S.newCatName=e.target.value;ni.classList.remove("err")};
-  ni.onkeydown=e=>{if(e.key==="Enter")doAddCat(ni)};
-  addRow.appendChild(ni);addRow.appendChild(b("btn bp","+ הוסף",()=>doAddCat(ni)));
-  form.appendChild(addRow);container.appendChild(form);
-}
-
-function doAddCat(ni){
-  const name=(S.newCatName||"").trim();
-  if(!name){ni.classList.add("err");ni.focus();return}
-  S.cats.push({id:"cat_"+uid(),label:name,products:[]});
-  S.newCatName="";render();
-}
-
-function buildCatRow(cat){
-  const wrap=d("cat-mgr-row");
-  const isOpen=S.openCatId===cat.id;
-  const hdr=d("cat-hdr");
-  const hl=d("cat-hdr-l");
-  hl.appendChild(d("cat-arrow",isOpen?"▾":"▸"));
-  const nameEl=d("cat-name",cat.label);
-  hl.appendChild(nameEl);hl.appendChild(d("cat-count","("+cat.products.length+")"));
-  hl.onclick=()=>{S.openCatId=isOpen?null:cat.id;render()};
-  const hr2=d("cat-hdr-r");
-  const eb=b("act-btn","✏️",e=>{
-    e.stopPropagation();
-    const inp=el("input","inline-inp");inp.value=cat.label;
-    nameEl.replaceWith(inp);inp.focus();
-    function save(){const v=inp.value.trim();if(v)cat.label=v;render()}
-    inp.onblur=save;inp.onkeydown=e2=>{if(e2.key==="Enter")save();if(e2.key==="Escape")render()};
-  });
-  const db=b("act-btn del","🗑️",e=>{
-    e.stopPropagation();
-    if(S.cats.length<=1)return;
-    S.cats=S.cats.filter(x=>x.id!==cat.id);
-    if(S.openCatId===cat.id)S.openCatId=null;
-    render();
-  });
-  if(S.cats.length<=1)db.style.opacity="0.3";
-  hr2.appendChild(eb);hr2.appendChild(db);
-  hdr.appendChild(hl);hdr.appendChild(hr2);wrap.appendChild(hdr);
-  if(isOpen){
-    const pm=d("prod-mgr");
-    if(!cat.products.length)pm.appendChild(d("prod-empty","אין מוצרים עדיין"));
-    else{
-      const ul=el("ul","prod-list");
-      cat.products.forEach(prod=>{
-        const li=el("li","prod-row");
-        li.appendChild(d("prod-dot","·"));
-        const pn=d("prod-name",prod);li.appendChild(pn);
-        const pa=d("prod-acts");
-        pa.appendChild(b("act-btn","✏️",()=>{
-          const inp=el("input","inline-inp");inp.value=prod;
-          pn.replaceWith(inp);inp.focus();
-          function save(){const v=inp.value.trim();if(v&&v!==prod){const i=cat.products.indexOf(prod);if(i>=0)cat.products[i]=v}render()}
-          inp.onblur=save;inp.onkeydown=e=>{if(e.key==="Enter")save();if(e.key==="Escape")render()};
-        }));
-        pa.appendChild(b("act-btn del","🗑️",()=>{cat.products=cat.products.filter(p=>p!==prod);render()}));
-        li.appendChild(pa);ul.appendChild(li);
-      });
-      pm.appendChild(ul);
-    }
-    const ar=d("add-row");
-    const pi=el("input","finput sm");pi.placeholder="שם מוצר חדש...";
-    pi.onkeydown=e=>{if(e.key==="Enter")doAddProd(cat,pi)};
-    ar.appendChild(pi);ar.appendChild(b("btn bp","+ הוסף",()=>doAddProd(cat,pi)));
-    pm.appendChild(ar);wrap.appendChild(pm);
-  }
-  return wrap;
-}
-
-function doAddProd(cat,inp){
-  const v=inp.value.trim();
-  if(!v||cat.products.includes(v)){inp.classList.add("err");inp.focus();return}
-  cat.products.push(v);inp.value="";render();
 }
 
 /* ── Boot ── */
