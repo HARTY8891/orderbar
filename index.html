@@ -30,8 +30,10 @@ body{overscroll-behavior:none}
 .cbtn{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);color:var(--txt);cursor:pointer;padding:26px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px;transition:background .12s,transform .08s;user-select:none}
 .cbtn:active{transform:scale(.96)}
 .cbtn-lbl{font-size:1rem;font-weight:700}
-.pbtn{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);color:var(--txt);cursor:pointer;padding:16px 8px;text-align:center;font-size:0.9rem;font-weight:600;transition:background .12s,transform .08s;user-select:none}
+.pbtn{background:var(--card);border:1px solid var(--brd);border-radius:var(--r);color:var(--txt);cursor:pointer;padding:14px 8px;text-align:center;transition:background .12s,transform .08s;user-select:none;display:flex;flex-direction:column;align-items:center;gap:4px}
 .pbtn:active{transform:scale(.95)}
+.pbtn-name{font-size:0.9rem;font-weight:600;line-height:1.3}
+.pbtn-price{font-size:0.78rem;color:var(--acc);font-weight:700}
 .btn{border:none;border-radius:var(--r);cursor:pointer;font-size:0.95rem;font-weight:700;padding:12px 16px;transition:opacity .15s,transform .08s;user-select:none;text-align:center;display:inline-block;text-decoration:none}
 .btn:active{transform:scale(.97)}
 .bp{background:var(--acc);color:#111}.bs{background:var(--card);color:var(--txt);border:1px solid var(--brd)}
@@ -46,10 +48,14 @@ body{overscroll-behavior:none}
 .oitm:last-child{border-bottom:none}
 .onum{color:var(--mut);font-size:0.82rem;min-width:24px;flex-shrink:0}
 .oname{flex:1;font-size:0.95rem;font-weight:600}
+.oprice{color:var(--acc);font-size:0.85rem;font-weight:700;margin-left:10px;flex-shrink:0}
 .xb{background:transparent;border:none;color:var(--dan);font-size:0.95rem;cursor:pointer;padding:5px 9px;border-radius:8px;transition:background .12s;flex-shrink:0}
 .xb:active{background:rgba(239,68,68,.15)}
 .empty{text-align:center;padding:48px 16px;color:var(--mut)}
 .empty-ico{font-size:2.2rem;margin-bottom:10px}
+.total-bar{display:flex;align-items:center;justify-content:space-between;background:var(--sur);border:1px solid var(--brd);border-radius:var(--r);padding:14px 18px;margin-bottom:18px}
+.total-lbl{font-size:0.95rem;font-weight:600;color:var(--mut)}
+.total-val{font-size:1.3rem;font-weight:800;color:var(--acc)}
 .wa-box{background:#0a3d1f;border:2px solid #25d366;border-radius:var(--r);padding:20px;margin-bottom:18px;text-align:center}
 .wa-ttl{font-size:0.85rem;color:#a0ffb8;margin-bottom:14px;font-weight:600}
 .wa-link{display:block;background:#25d366;color:#fff;font-size:1.1rem;font-weight:800;padding:16px;border-radius:var(--r);text-decoration:none;margin-bottom:10px;border:none;cursor:pointer;width:100%}
@@ -70,17 +76,24 @@ body{overscroll-behavior:none}
 <body>
 <div id="app"></div>
 <script>
-// ── שם קובץ האקסל ב-repo (חייב להיות באותה תיקיה) ──
 const EXCEL_FILE = "קטגוריות_ומוצרים.xlsx";
 
 const FALLBACK_CATS = [
-  {id:"c0",label:"שתייה קלה",products:["קולה","קולה זירו","ספרייט","פאנטה","מים","סודה","ענבים","תפוזים","לימונדה"]},
-  {id:"c1",label:"אלכוהול",products:["בירה","ערק","וודקה","וויסקי","צ'ייסר","קוקטייל"]},
-  {id:"c2",label:"נרגילות",products:["ענבים","נענע","אבטיח","לימון","אפרסק","מיקס הבית - רגיל","מיקס הבית - פרימיום"]},
-  {id:"c3",label:"אוכל",products:["צ'יפס","שניצלונים","המבורגר","סלט","פיצה","נאצ'וס"]},
-  {id:"c4",label:"קינוחים",products:["מלבי","סופלה","גלידה","עוגת שוקולד"]},
+  {id:"c0",label:"שתייה חמה",products:[{name:"קפה שחור",price:10},{name:"תה",price:10},{name:"אספרסו",price:10}]},
+  {id:"c1",label:"שתייה קלה",products:[{name:"מים",price:12},{name:"מים בטעמים",price:12},{name:"סודה",price:12},{name:"קולה",price:12},{name:"קולה זירו",price:12},{name:"ספרייט",price:12},{name:"פיוזטי",price:12},{name:"פאנטה",price:12},{name:"XL",price:12},{name:"לימונדה",price:15},{name:"ברד בטעמים",price:15},{name:"לימונענע גרוס",price:20}]},
+  {id:"c2",label:"בירות",products:[{name:"וויינשטפן",price:30},{name:"קסטיל",price:30},{name:"קורונה",price:30},{name:"סטלה",price:30},{name:"סטורג' אדום",price:30},{name:"הייניקן",price:30},{name:"קרלסברג",price:30},{name:"בריזר",price:30}]},
+  {id:"c3",label:"שתייה חריפה",products:[{name:"בקבוק וודקה פינלנדיה + 8XL",price:500},{name:"בקבוק וודקה בלוגה",price:600},{name:"בקבוק ערק + לימונים",price:400},{name:"בקבוק ויסקי",price:550},{name:"בקבוק יין",price:200},{name:"בלו נאן",price:200},{name:"בקבוק יין אדום",price:200},{name:"כוס וודקה/ערק/ויסקי",price:50},{name:"כוס יין",price:50},{name:"צ'ייסר",price:15}]},
+  {id:"c4",label:"שוטים במבצע",products:[{name:"צ'ייסרים - 5 יחידות",price:70},{name:"צ'ייסרים - 10 יחידות",price:120},{name:"Apple Pie",price:null},{name:"Honey Bee",price:null}]},
+  {id:"c5",label:"קוקטיילים",products:[{name:"Ma de Janeiro",price:50},{name:"Cosmo Lychee",price:50}]},
+  {id:"c6",label:"מנות עיקריות",products:[{name:"נקניקיה/שניצל בבגט + צ'יפס",price:70},{name:"שקשוקה",price:50}]},
+  {id:"c7",label:"מיקס",products:[{name:"טבעות & צ'יפס",price:50},{name:"צ'יפס & בטטה",price:50},{name:"נקניקיות & טבעות",price:60},{name:"שניצלונים & כדורי פירה",price:60},{name:"שניצלונים & צ'יפס",price:60},{name:"נקניקיות & צ'יפס",price:60}]},
+  {id:"c8",label:"נשנושים",products:[{name:"צ'יפס",price:40},{name:"צ'יפס בטטה",price:45},{name:"הומפריז",price:45},{name:"כדורי פירה",price:45},{name:"שניצלונים",price:50},{name:"כרובית מטוגנת",price:50},{name:"פסטלים/סיגרים",price:50},{name:"נקניקיות מיני",price:50},{name:"נקניקיות מרגז",price:50},{name:"טבעות בצל",price:45},{name:"חומוס (עלה/פיתה)",price:40},{name:"אדממה",price:50},{name:"פלטה מטוגנים",price:180},{name:"פלטת ירקות",price:65}]},
+  {id:"c9",label:"נאצ'וס",products:[{name:"נאצ'וס קטן",price:25},{name:"נאצ'וס גדול",price:30}]},
+  {id:"c10",label:"Sweet - קינוחים",products:[{name:"סופלה",price:35},{name:"תוספת כדור גלידה (פרווה)",price:10},{name:"מלבי",price:20},{name:"בוואריה",price:20},{name:"מוס שוקולד",price:20},{name:"צ'ורוס",price:30},{name:"אבטיח (בעונה)",price:40}]},
+  {id:"c11",label:"נרגילות",products:[{name:"תפוח נחלה",price:40},{name:"Love 66",price:40},{name:"לימונענע",price:40},{name:"אייס ענבים",price:90},{name:"Love 66 פרימיום",price:90},{name:"אייס סוכריה",price:90},{name:"ארטיק אבטיח דובדבן",price:90},{name:"לידי קילר",price:90},{name:"אייס פירות יער",price:90},{name:"אייס אבטיח",price:90},{name:"אייס מנגו",price:90},{name:"אייס אוכמניות",price:90},{name:"מילוי טבק פרימיום",price:50},{name:"תוספת ראש קלאוד",price:25}]},
 ];
 
+/* ── Parse Excel: A=category, B=product, C=price ── */
 function parseCats(wb) {
   const ws = wb.Sheets[wb.SheetNames[0]];
   const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:""});
@@ -89,11 +102,13 @@ function parseCats(wb) {
   for (let i = 3; i < rows.length; i++) {
     const cat  = String(rows[i][0] || "").trim();
     const prod = String(rows[i][1] || "").trim();
+    const rawPrice = rows[i][2];
+    const price = (rawPrice !== "" && rawPrice !== null && rawPrice !== undefined && !isNaN(Number(rawPrice))) ? Number(rawPrice) : null;
     if (!cat && !prod) continue;
     const cur = cat || lastCat;
     if (!cur) continue;
     if (!catMap[cur]) { catMap[cur] = []; catOrder.push(cur); }
-    if (prod) catMap[cur].push(prod);
+    if (prod) catMap[cur].push({name: prod, price: price});
     if (cat) lastCat = cat;
   }
   return catOrder.map((label, i) => ({id:"x"+i, label, products: catMap[label]}));
@@ -116,9 +131,9 @@ async function loadExcel() {
 
 let S={
   screen:"tables",table:null,cat:null,
-  items:[],
+  items:[],  // {id, name, price}
   totalTables:30,
-  cats: FALLBACK_CATS.map(c=>({...c,products:[...c.products]})),
+  cats: FALLBACK_CATS.map(c=>({...c,products:c.products.map(p=>({...p}))})),
 };
 let toastT=null;
 
@@ -126,6 +141,7 @@ function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36
 function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;return e}
 function d(cls,html){return el("div",cls,html)}
 function b(cls,txt,fn){const e=el("button",cls,txt);if(fn)e.onclick=fn;return e}
+function fmtPrice(p){return p!=null?"₪"+p:""}
 
 function toast(msg,err){
   document.querySelectorAll(".toast").forEach(x=>x.remove());
@@ -164,7 +180,7 @@ function buildTables(w){
   const c=d("content"),g=d("g5");
   for(let n=1;n<=S.totalTables;n++){
     const e=d("tbtn");
-    e.innerHTML=`<div class="tbtn-lbl">שולחן</div><div class="tbtn-n">${n}</div>`;
+    e.innerHTML='<div class="tbtn-lbl">שולחן</div><div class="tbtn-n">'+n+'</div>';
     e.onclick=()=>{S.table=n;S.items=[];go("menu")};
     g.appendChild(e);
   }
@@ -177,7 +193,8 @@ function buildMenu(w){
   w.appendChild(topbar("שולחן "+S.table,"בחר קטגוריה",[ibtn("🧾",()=>go("summary"),cnt||null),ibtn("🏠",()=>go("tables"))]));
   const c=d("content"),g=d("g2");
   S.cats.forEach(cat=>{
-    const e=d("cbtn");e.innerHTML=`<span class="cbtn-lbl">${cat.label}</span>`;
+    const e=d("cbtn");
+    e.innerHTML='<span class="cbtn-lbl">'+cat.label+'</span>';
     e.onclick=()=>{S.cat=cat.id;go("cat")};g.appendChild(e);
   });
   c.appendChild(g);c.appendChild(el("hr","dvd"));
@@ -195,11 +212,13 @@ function buildCat(w){
   w.appendChild(topbar("שולחן "+S.table+" — "+cat.label,"לחץ על מוצר להוספה",[ibtn("🧾",()=>go("summary"),cnt||null),ibtn("←",()=>go("menu"))]));
   const c=d("content");
   if(!cat.products.length){
-    const em=d("empty");em.innerHTML=`<div class="empty-ico">📋</div><div>אין מוצרים בקטגוריה זו</div>`;c.appendChild(em);
+    const em=d("empty");em.innerHTML='<div class="empty-ico">📋</div><div>אין מוצרים בקטגוריה זו</div>';c.appendChild(em);
   } else {
     const g=d("g3");
     cat.products.forEach(prod=>{
-      const e=d("pbtn",prod);
+      const e=d("pbtn");
+      e.appendChild(d("pbtn-name",prod.name));
+      if(prod.price!=null) e.appendChild(d("pbtn-price","₪"+prod.price));
       e.onclick=()=>addItem(prod);
       g.appendChild(e);
     });
@@ -213,38 +232,57 @@ function buildCat(w){
   c.appendChild(row);w.appendChild(c);
 }
 
-function addItem(name){S.items.push({id:uid(),name});toast("✓ "+name+" נוסף");render()}
+function addItem(prod){S.items.push({id:uid(),name:prod.name,price:prod.price});toast("✓ "+prod.name+" נוסף");render()}
 
 /* ── Summary ── */
 function buildSummary(w){
   const c2=S.items.length;
+  const total=S.items.reduce((s,it)=>s+(it.price||0),0);
   w.appendChild(topbar("סיכום הזמנה — שולחן "+S.table,c2+" פריטים",[ibtn("←",()=>go("menu")),ibtn("🏠",()=>go("tables"))]));
   const c=d("content");
   if(!c2){
-    const em=d("empty");em.innerHTML=`<div class="empty-ico">🛒</div><div>עדיין לא נוספו מוצרים להזמנה</div>`;
+    const em=d("empty");em.innerHTML='<div class="empty-ico">🛒</div><div>עדיין לא נוספו מוצרים להזמנה</div>';
     const mb=b("btn bs","← חזרה לתפריט",()=>go("menu"));mb.style.marginTop="18px";em.appendChild(mb);c.appendChild(em);
   } else {
     const ul=el("ul","olist");
     S.items.forEach((item,i)=>{
       const li=el("li","oitm");
-      li.appendChild(d("onum",String(i+1)+"."));li.appendChild(d("oname",item.name));
+      li.appendChild(d("onum",String(i+1)+"."));
+      li.appendChild(d("oname",item.name));
+      if(item.price!=null) li.appendChild(d("oprice","₪"+item.price));
       const xb=b("xb","✕",()=>{S.items=S.items.filter(x=>x.id!==item.id);render()});
       li.appendChild(xb);ul.appendChild(li);
     });
     c.appendChild(ul);
-    const msg="שולחן: "+S.table+"\n"+S.items.map(it=>it.name).join("\n");
-    const wb=d("wa-box");
-    wb.appendChild(d("wa-ttl","לחץ לשליחת ההזמנה:"));
+
+    /* Total bar */
+    const tb=d("total-bar");
+    tb.appendChild(d("total-lbl","סה״כ"));
+    tb.appendChild(d("total-val","₪"+total));
+    c.appendChild(tb);
+
+    /* WhatsApp */
+    const lines=["שולחן: "+S.table];
+    S.items.forEach(it=>{
+      let line=it.name;
+      if(it.price!=null) line+=" - ₪"+it.price;
+      lines.push(line);
+    });
+    lines.push("סה״כ: ₪"+total);
+    const msg=lines.join("\n");
+
+    const wb2=d("wa-box");
+    wb2.appendChild(d("wa-ttl","לחץ לשליחת ההזמנה:"));
     const wl=b("wa-link","📲 העתק והמשך לוואטסאפ",()=>{
-      try{navigator.clipboard.writeText(msg)}catch(e){
-        const t=el("textarea");t.value=msg;t.style.cssText="position:fixed;opacity:0";
-        document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();
+      try{navigator.clipboard.writeText(msg)}catch(e2){
+        const ta=el("textarea");ta.value=msg;ta.style.cssText="position:fixed;opacity:0";
+        document.body.appendChild(ta);ta.select();try{document.execCommand("copy")}catch(e3){}ta.remove();
       }
       toast("✓ ההודעה הועתקה — עובר לוואטסאפ");
-      setTimeout(()=>window.open("https://wa.me/","_blank"),600);
+      setTimeout(()=>window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank"),600);
       setTimeout(()=>{S.items=[];go("tables")},2500);
     });
-    wb.appendChild(wl);wb.appendChild(d("wa-note","ההודעה תועתק — הדבק בוואטסאפ ושלח"));c.appendChild(wb);
+    wb2.appendChild(wl);wb2.appendChild(d("wa-note","ההודעה תועתק — הדבק בוואטסאפ ושלח"));c.appendChild(wb2);
     const row=d("row");
     row.appendChild(b("btn bs","← המשך להזמין",()=>go("menu")));row.appendChild(b("btn bs","🏠",()=>go("tables")));
     c.appendChild(row);
@@ -256,7 +294,6 @@ function buildSummary(w){
 function buildSettings(w){
   w.appendChild(topbar("הגדרות","",[ibtn("✕",()=>go("tables"))]));
   const c=d("content");
-
   const sc=d("scard");sc.appendChild(d("sc-title","שולחנות"));
   const sr=d("sc-row");sr.appendChild(d("sc-lbl","מספר שולחנות"));
   const st=d("stepper");
@@ -267,7 +304,6 @@ function buildSettings(w){
   pb.disabled=S.totalTables>=99;
   st.appendChild(mb2);st.appendChild(sv);st.appendChild(pb);sr.appendChild(st);sc.appendChild(sr);
   sc.appendChild(d("hint","ניתן להגדיר בין 1 ל-99 שולחנות"));c.appendChild(sc);
-
   const bk=b("btn bs bfull","← חזרה למסך הראשי",()=>go("tables"));bk.style.marginTop="4px";c.appendChild(bk);
   w.appendChild(c);
 }
