@@ -267,7 +267,6 @@ function buildSummary(w){
       if(it.price!=null) line+=" - ₪"+it.price;
       lines.push(line);
     });
-    lines.push("סה״כ: ₪"+total);
     const msg=lines.join("\n");
 
     const wb2=d("wa-box");
